@@ -11,5 +11,3 @@ services:
       - 80:80
     volumes:
       - ./app:/fast-app/app
-
-
