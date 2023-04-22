@@ -1,6 +1,6 @@
 # !/usr/bin/env python
 # Fast API first app!
-from fastapi import FastAPI, Request, Form
+from fastapi import FastAPI, Request, Form, Body
 
 
 
@@ -10,7 +10,7 @@ app.title = "Movies API!"
 app.version = "v0.0.1"
 
 # Movies dict list
-MOVIES_LIST = movies = [
+movies_list = movies = [
     {
         'id': 1,
         'title': 'Avatar',
@@ -58,7 +58,7 @@ def list_movies():
     The list of movies to return.
     :return:
     """
-    return MOVIES_LIST
+    return movies_list
 
 @app.get("/movies/{id}", tags=["Movies List"])
 def list_endpoint_id(id: int):
@@ -71,7 +71,7 @@ def list_endpoint_id(id: int):
     no_item_msg = (
         "No item available for the requested id: {id}"
     )
-    movie_title = [ movie.get("title") for movie in MOVIES_LIST if movie.get("id") == id ]
+    movie_title = [ movie.get("title") for movie in movies_list if movie.get("id") == id ]
     if not movie_title:
         return no_item_msg.replace("{id}", str(id))
     return {
@@ -80,7 +80,7 @@ def list_endpoint_id(id: int):
     }
 
 @app.get("/movies/", tags=["Movies List"])
-def category_filter(category: str):
+def category_filter(category: str, year: int):
     """
     Filters per category given a category
     string query parameter.
@@ -92,7 +92,31 @@ def category_filter(category: str):
     no_category_msg = (
         "There's no category called '{category}'"
     )
-    movie_category = [ movie.get("title") for movie in MOVIES_LIST if movie.get("category") == category]
+    movie_category = [ movie.get("title") for movie in movies_list if movie.get("category") == category]
     if not movie_category:
         return no_category_msg.replace("{category}", category)
     return f"{movie_category[0]!r}"
+
+@app.post("/movies", tags=["Movies List"])
+def add_movie(id: int = Body(), title: str = Body(), overview: str = Body(), year: str = Body(), rating: int = Body(), category: str = Body()):
+    """
+    
+    :param id: 
+    :param title: 
+    :param overview: 
+    :param year: 
+    :param rating: 
+    :param category: 
+    :return: 
+    """
+    new_movie = {
+        "id": id,
+        "title": title,
+        "overview": overview,
+        "year": year,
+        "rating": rating,
+        "category": category,
+    }
+    movies_list.append(new_movie)
+    return movies_list
+    
